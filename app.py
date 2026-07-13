@@ -12,6 +12,12 @@ st.header("Average Price by Brand")
 brand_prices = df.groupby('brand')['price'].mean().sort_values(ascending=False)
 st.bar_chart(brand_prices)
 
+st.markdown("""
+**Key finding:** Rick Owens averages $769 vs. Carhartt's $82 — nearly a 9x gap.
+But every brand's *median* is lower than its *mean* (e.g. Rick Owens: $585 median vs $769 mean),
+meaning a handful of rare, expensive listings are pulling the average up in every brand.
+""")
+
 # Interactive brand filter
 st.header("Explore by Brand")
 selected_brand = st.selectbox("Choose a brand", df['brand'].unique())
@@ -38,3 +44,20 @@ for word in common_words:
 
 word_price_series = pd.Series(word_prices).sort_values(ascending=False).head(15)
 st.bar_chart(word_price_series)
+
+st.markdown("""
+**Key finding:** Words like `leather`, `waxed`, and `patchwork` correlate with higher prices
+regardless of brand — these describe material/craft, not just brand name.
+
+**Caveat:** some high-price words (`owens`, `rick`, `drkshdw`) are really just other ways of
+saying "Rick Owens," since it's the priciest brand by far. A rigorous next step would be checking
+whether "premium" words still predict price *within* a single brand, to rule out this brand-proxy effect.
+""")
+
+st.subheader("Mean vs. Median Price by Brand")
+comparison = pd.DataFrame({
+    'Mean': df.groupby('brand')['price'].mean(),
+    'Median': df.groupby('brand')['price'].median()
+}).sort_values('Mean', ascending=False)
+st.dataframe(comparison)
+
